@@ -28,12 +28,12 @@ func reader(conn *websocket.Conn) {
 		switch r.Type {
 		case "handshake":
 			// Read handshake from client
-			hsC := &shared.CtS_HandshakeRequest{}
+			hsC := &shared.HandshakeRequest{}
 			json.Unmarshal(r.Body, hsC)
 			fmt.Println("handshake received.", "client nick:", string(hsC.Nick))
 
 			// Send handshake to client
-			hsS := &shared.StC_HandshakeRequest{
+			hsS := &shared.HandshakeResponse{
 				MatchMap: matchMap,
 			}
 			shared.WriteRequest(conn, "handshake", hsS)
