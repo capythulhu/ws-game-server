@@ -20,13 +20,16 @@ func WriteRequest(conn *websocket.Conn, requestType string, requestBody interfac
 	conn.WriteJSON(req)
 }
 
-// CtS = Client to Server
-// StC = Server to Client
-
-type CtS_HandshakeRequest struct {
+type HandshakeRequest struct {
 	Nick rune
 }
 
-type StC_HandshakeRequest struct {
+type HandshakeResponse struct {
 	MatchMap Map
 }
+
+type MoveRequest struct {
+	Direction Coordinate
+}
+
+type ShootRequest struct{}

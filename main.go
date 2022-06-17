@@ -3,12 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-
-	"github.com/thzoid/ws-game-server/shared"
-)
-
-var (
-	matchMap = shared.Map{}
 )
 
 func main() {
