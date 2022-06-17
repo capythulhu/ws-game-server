@@ -1,13 +1,13 @@
 package shared
 
 type Coordinate struct {
-	x, y int
+	X, Y int
 }
 
 func (c Coordinate) Equals(d Coordinate) bool {
-	return c.x == d.x && c.y == d.y
+	return c.X == d.X && c.Y == d.Y
 }
 
 type Actor struct {
-	position Coordinate
+	Position Coordinate
 }
