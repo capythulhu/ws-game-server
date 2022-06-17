@@ -1,11 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/websocket"
+	"github.com/thzoid/ws-game-server/shared"
 )
 
 var upgrader = websocket.Upgrader{
@@ -19,6 +21,21 @@ func reader(conn *websocket.Conn) {
 		if err != nil {
 			fmt.Println("client disconnected")
 			return
+		}
+
+		r := &shared.Request{}
+		json.Unmarshal(p, r)
+		switch r.Type {
+		case "handshake":
+			// Read handshake from client
+			hsC := &shared.CtS_HandshakeRequest{}
+			json.Unmarshal(r.Body, hsC)
+
+			// Send handshake to client
+			hsS := &shared.StC_HandshakeRequest{
+				MapSize: mapSize,
+			}
+			shared.WriteRequest(conn, "handshake", hsS)
 		}
 
 		fmt.Println("message received:", string(p))
