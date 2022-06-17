@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	mapSize = shared.Coordinate{}
+	matchMap = shared.Map{}
 )
 
 func main() {
@@ -17,8 +17,8 @@ func main() {
 	heightPtr := flag.Uint("height", 10, "world map height")
 	flag.Parse()
 
-	mapSize.X = int(*widthPtr)
-	mapSize.Y = int(*heightPtr)
+	matchMap.Size.X = int(*widthPtr)
+	matchMap.Size.Y = int(*heightPtr)
 
 	fmt.Println("world map size: ("+fmt.Sprint(*widthPtr)+",", fmt.Sprint(*heightPtr)+")")
 	listen(":" + fmt.Sprint(*portPtr))

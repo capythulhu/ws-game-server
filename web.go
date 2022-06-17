@@ -34,7 +34,7 @@ func reader(conn *websocket.Conn) {
 
 			// Send handshake to client
 			hsS := &shared.StC_HandshakeRequest{
-				MapSize: mapSize,
+				MatchMap: matchMap,
 			}
 			shared.WriteRequest(conn, "handshake", hsS)
 		default:

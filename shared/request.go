@@ -28,5 +28,5 @@ type CtS_HandshakeRequest struct {
 }
 
 type StC_HandshakeRequest struct {
-	MapSize Coordinate
+	MatchMap Map
 }
