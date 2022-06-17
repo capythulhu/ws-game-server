@@ -30,15 +30,16 @@ func reader(conn *websocket.Conn) {
 			// Read handshake from client
 			hsC := &shared.CtS_HandshakeRequest{}
 			json.Unmarshal(r.Body, hsC)
+			fmt.Println("handshake received.", "client nick:", string(hsC.Nick))
 
 			// Send handshake to client
 			hsS := &shared.StC_HandshakeRequest{
 				MapSize: mapSize,
 			}
 			shared.WriteRequest(conn, "handshake", hsS)
+		default:
+			fmt.Println("message received:", string(p))
 		}
-
-		fmt.Println("message received:", string(p))
 	}
 }
 
