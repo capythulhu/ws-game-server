@@ -15,7 +15,6 @@ var (
 func SpawnPlayer(conn *websocket.Conn, profile shared.Profile) uuid.UUID {
 	// Build player
 	player := shared.Player{
-		MatchMap: matchMap,
 		Profile:  profile,
 		Position: shared.Coordinate{X: 0, Y: 0},
 		Velocity: 1,
