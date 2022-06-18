@@ -23,11 +23,13 @@ var (
 // Output function
 func heartbeat(conn *websocket.Conn) {
 	for range time.Tick(time.Millisecond * time.Duration(hbRate)) {
-		shared.WriteMessage(conn, "heartbeat",
+		if err := shared.WriteMessage(conn, "heartbeat",
 			shared.HeartbeatResponse{
 				Players: players,
 			},
-		)
+		); err != nil {
+			return
+		}
 	}
 }
 
@@ -46,7 +48,6 @@ func reader(conn *websocket.Conn) {
 			// Read handshake from client
 			hsC := &shared.HandshakeRequest{}
 			json.Unmarshal(m.Body, hsC)
-			fmt.Println("handshake received.", "client nick:", string(hsC.UserProfile.Nick))
 
 			// Send handshake to client
 			hsS := &shared.HandshakeResponse{

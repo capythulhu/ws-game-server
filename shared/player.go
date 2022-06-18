@@ -5,9 +5,9 @@ type Profile struct {
 }
 
 type Player struct {
-	Profile
-	Position Coordinate
-	Velocity uint
+	UserProfile Profile
+	Position    Coordinate
+	Velocity    uint
 }
 
 func (p *Player) Move(direction Coordinate, matchMap Map) {

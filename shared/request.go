@@ -12,13 +12,13 @@ type Message struct {
 	Body []byte
 }
 
-func WriteMessage(conn *websocket.Conn, messageType string, messageBody interface{}) {
+func WriteMessage(conn *websocket.Conn, messageType string, messageBody interface{}) error {
 	body, _ := json.Marshal(messageBody)
 	req := Message{
 		Type: messageType,
 		Body: body,
 	}
-	conn.WriteJSON(req)
+	return conn.WriteJSON(req)
 }
 
 func ReadMessage(conn *websocket.Conn) (*Message, error) {
