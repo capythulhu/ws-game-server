@@ -10,7 +10,7 @@ type Player struct {
 	Velocity uint
 }
 
-func (p *Player) Move(direction Coordinate, matchMap Map) {
+func (p *Player) Move(direction Coordinate, matchMap *Map) {
 	switch true {
 	case direction.X < 0:
 		p.Position.X = max(p.Position.X-int(p.Velocity), 0)
