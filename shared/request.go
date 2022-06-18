@@ -3,25 +3,39 @@ package shared
 import (
 	"encoding/json"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
 
-type Request struct {
+type Message struct {
 	Type string
 	Body []byte
 }
 
-func WriteRequest(conn *websocket.Conn, requestType string, requestBody interface{}) {
-	body, _ := json.Marshal(requestBody)
-	req := Request{
-		Type: requestType,
+func WriteMessage(conn *websocket.Conn, messageType string, messageBody interface{}) {
+	body, _ := json.Marshal(messageBody)
+	req := Message{
+		Type: messageType,
 		Body: body,
 	}
 	conn.WriteJSON(req)
 }
 
+func ReadMessage(conn *websocket.Conn) (*Message, error) {
+	// Read message from client
+	_, p, err := conn.ReadMessage()
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarshal message
+	r := &Message{}
+	json.Unmarshal(p, r)
+	return r, nil
+}
+
 type HandshakeRequest struct {
-	Nick rune
+	UserProfile Profile
 }
 
 type HandshakeResponse struct {
@@ -33,3 +47,7 @@ type MoveRequest struct {
 }
 
 type ShootRequest struct{}
+
+type HeartbeatResponse struct {
+	Players map[uuid.UUID]Player
+}

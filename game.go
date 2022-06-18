@@ -6,18 +6,24 @@ import (
 	"github.com/thzoid/ws-game-server/shared"
 )
 
-type controlledPlayer struct {
-	shared.Player
-	conn *websocket.Conn
-}
-
 var (
-	matchMap = shared.Map{}
-	players  = map[uuid.UUID]controlledPlayer{}
+	matchMap = new(shared.Map)
+	players  = make(map[uuid.UUID]shared.Player)
+	conns    = make(map[uuid.UUID]*websocket.Conn)
 )
 
-func SpawnPlayer(conn *websocket.Conn, player shared.Player) uuid.UUID {
+func SpawnPlayer(conn *websocket.Conn, profile shared.Profile) uuid.UUID {
+	// Build player
+	player := shared.Player{
+		MatchMap: matchMap,
+		Profile:  profile,
+		Position: shared.Coordinate{X: 0, Y: 0},
+		Velocity: 1,
+	}
+
+	// Spawn player
 	id := uuid.New()
-	players[id] = controlledPlayer{Player: player, conn: conn}
+	players[id] = player
+	conns[id] = conn
 	return id
 }

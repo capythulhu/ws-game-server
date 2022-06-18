@@ -5,54 +5,77 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/thzoid/ws-game-server/shared"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
+// Websocket upgrader
+var (
+	upgrader = websocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+	}
+	hbRate = 100
+)
+
+// Output function
+func heartbeat(conn *websocket.Conn) {
+	for range time.Tick(time.Millisecond * time.Duration(hbRate)) {
+		shared.WriteMessage(conn, "heartbeat",
+			shared.HeartbeatResponse{
+				Players: players,
+			},
+		)
+	}
 }
 
+// Input function
 func reader(conn *websocket.Conn) {
 	for {
-		_, p, err := conn.ReadMessage()
+		// Read message from client
+		m, err := shared.ReadMessage(conn)
 		if err != nil {
 			fmt.Println("client disconnected")
 			return
 		}
 
-		r := &shared.Request{}
-		json.Unmarshal(p, r)
-		switch r.Type {
+		switch m.Type {
 		case "handshake":
 			// Read handshake from client
 			hsC := &shared.HandshakeRequest{}
-			json.Unmarshal(r.Body, hsC)
-			fmt.Println("handshake received.", "client nick:", string(hsC.Nick))
+			json.Unmarshal(m.Body, hsC)
+			fmt.Println("handshake received.", "client nick:", string(hsC.UserProfile.Nick))
 
 			// Send handshake to client
 			hsS := &shared.HandshakeResponse{
-				MatchMap: matchMap,
+				MatchMap: *matchMap,
 			}
-			shared.WriteRequest(conn, "handshake", hsS)
+			shared.WriteMessage(conn, "handshake", hsS)
+
+			// Spawn player in world
+			SpawnPlayer(conn, hsC.UserProfile)
+
+			// Start sending heartbeat
+			go heartbeat(conn)
 		default:
-			fmt.Println("message received:", string(p))
+			fmt.Println("message received:", m)
 		}
 	}
 }
 
-func wsEndpoint(w http.ResponseWriter, r *http.Request) {
-	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
-	conn, _ := upgrader.Upgrade(w, r, nil)
-
-	fmt.Println("client connected")
-	reader(conn)
-}
-
 func listen(port string) {
 	fmt.Println("server listening on", port)
-	http.HandleFunc("/", wsEndpoint)
+	// Handle websocket connection
+	http.HandleFunc("/",
+		func(w http.ResponseWriter, r *http.Request) {
+			upgrader.CheckOrigin = func(r *http.Request) bool { return true }
+			conn, _ := upgrader.Upgrade(w, r, nil)
+
+			fmt.Println("client connected")
+			reader(conn)
+		},
+	)
 	log.Fatal(http.ListenAndServe(port, nil))
 }
