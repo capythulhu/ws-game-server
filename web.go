@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/thzoid/ws-game-server/shared"
 )
@@ -35,11 +36,13 @@ func heartbeat(conn *websocket.Conn) {
 
 // Input function
 func reader(conn *websocket.Conn) {
+	var playerID uuid.UUID
 	for {
 		// Read message from client
 		m, err := shared.ReadMessage(conn)
 		if err != nil {
 			fmt.Println("client disconnected")
+			UnspawnPlayer(playerID)
 			return
 		}
 
@@ -56,7 +59,7 @@ func reader(conn *websocket.Conn) {
 			shared.WriteMessage(conn, "handshake", hsS)
 
 			// Spawn player in world
-			SpawnPlayer(conn, hsC.UserProfile)
+			playerID = SpawnPlayer(conn, hsC.UserProfile)
 
 			// Start sending heartbeat
 			go heartbeat(conn)

@@ -7,8 +7,8 @@ import (
 
 func main() {
 	portPtr := flag.Uint("port", 8080, "port for the server to listen")
-	widthPtr := flag.Uint("width", 10, "world map width")
-	heightPtr := flag.Uint("height", 10, "world map height")
+	widthPtr := flag.Uint("width", 3, "world map width")
+	heightPtr := flag.Uint("height", 3, "world map height")
 	hbRatePtr := flag.Uint("rate", 100, "heartbeat rate in ms")
 	flag.Parse()
 
