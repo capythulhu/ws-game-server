@@ -49,7 +49,7 @@ func reader(conn *websocket.Conn) {
 		switch m.Type {
 		case "handshake":
 			// Read handshake from client
-			hsC := &shared.HandshakeRequest{}
+			hsC := new(shared.HandshakeRequest)
 			json.Unmarshal(m.Body, hsC)
 
 			// Send handshake to client
@@ -63,6 +63,15 @@ func reader(conn *websocket.Conn) {
 
 			// Start sending heartbeat
 			go heartbeat(conn)
+		case "move":
+			// Read move from client
+			mC := new(shared.MoveRequest)
+			json.Unmarshal(m.Body, mC)
+
+			// Move player
+			player := players[playerID]
+			player.Move(mC.Direction, *matchMap)
+			players[playerID] = player
 		default:
 			fmt.Println("message received:", m)
 		}

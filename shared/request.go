@@ -22,14 +22,12 @@ func WriteMessage(conn *websocket.Conn, messageType string, messageBody interfac
 }
 
 func ReadMessage(conn *websocket.Conn) (*Message, error) {
-	// Read message from client
 	_, p, err := conn.ReadMessage()
 	if err != nil {
 		return nil, err
 	}
 
-	// Unmarshal message
-	r := &Message{}
+	r := new(Message)
 	json.Unmarshal(p, r)
 	return r, nil
 }
@@ -39,6 +37,7 @@ type HandshakeRequest struct {
 }
 
 type HandshakeResponse struct {
+	PlayerID uuid.UUID
 	MatchMap Map
 }
 
