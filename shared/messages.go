@@ -45,8 +45,6 @@ type MoveRequest struct {
 	Direction Coordinate
 }
 
-type ShootRequest struct{}
-
 type HeartbeatResponse struct {
 	Players map[uuid.UUID]Player
 }
