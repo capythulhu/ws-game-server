@@ -7,15 +7,15 @@ import (
 
 func main() {
 	portPtr := flag.Uint("port", 8080, "port for the server to listen")
-	widthPtr := flag.Uint("width", 3, "world map width")
-	heightPtr := flag.Uint("height", 3, "world map height")
-	hbRatePtr := flag.Uint("rate", 100, "heartbeat rate in ms")
+	widthPtr := flag.Uint("width", 20, "world map width")
+	heightPtr := flag.Uint("height", 10, "world map height")
+	hbIntervalPtr := flag.Uint("interval", 100, "heartbeat interval in ms")
 	flag.Parse()
 
 	matchMap.Size.X = int(*widthPtr)
 	matchMap.Size.Y = int(*heightPtr)
 
-	hbRate = int(*hbRatePtr)
+	hbInterval = int(*hbIntervalPtr)
 
 	fmt.Println("world map size: ("+fmt.Sprint(*widthPtr)+",", fmt.Sprint(*heightPtr)+")")
 	listen(":" + fmt.Sprint(*portPtr))

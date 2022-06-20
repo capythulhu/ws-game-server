@@ -18,12 +18,12 @@ var (
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
 	}
-	hbRate = 100
+	hbInterval = 100
 )
 
 // Output function
 func heartbeat(conn *websocket.Conn) {
-	for range time.Tick(time.Millisecond * time.Duration(hbRate)) {
+	for range time.Tick(time.Millisecond * time.Duration(hbInterval)) {
 		if err := shared.WriteMessage(conn, "heartbeat",
 			shared.HeartbeatResponse{
 				Players: players,
@@ -52,14 +52,15 @@ func reader(conn *websocket.Conn) {
 			hsC := new(shared.HandshakeRequest)
 			json.Unmarshal(m.Body, hsC)
 
+			// Spawn player in world
+			playerID = SpawnPlayer(conn, hsC.UserProfile)
+
 			// Send handshake to client
 			hsS := &shared.HandshakeResponse{
+				PlayerID: playerID,
 				MatchMap: *matchMap,
 			}
 			shared.WriteMessage(conn, "handshake", hsS)
-
-			// Spawn player in world
-			playerID = SpawnPlayer(conn, hsC.UserProfile)
 
 			// Start sending heartbeat
 			go heartbeat(conn)
